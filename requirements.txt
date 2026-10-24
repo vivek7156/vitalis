@@ -1,0 +1,13 @@
+pandas
+numpy
+scikit-learn
+imbalanced-learn
+catboost
+shap
+pyyaml
+joblib
+pydantic
+fastapi
+uvicorn
+sqlalchemy
+python-dotenv
