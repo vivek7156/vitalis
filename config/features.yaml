@@ -1,0 +1,60 @@
+obesity:
+  target: NObeyesdad
+
+  target_classes:
+    - Insufficient_Weight
+    - Normal_Weight
+    - Overweight_Level_I
+    - Overweight_Level_II
+    - Obesity_Type_I
+    - Obesity_Type_II
+    - Obesity_Type_III
+
+  e1_bmi_inclusive:
+    - Gender
+    - Age
+    - Height
+    - Weight
+    - family_history_with_overweight
+    - FAVC
+    - FCVC
+    - NCP
+    - CAEC
+    - SMOKE
+    - CH2O
+    - SCC
+    - FAF
+    - TUE
+    - CALC
+    - MTRANS
+
+  e2_lifestyle_only:
+    - Gender
+    - Age
+    - family_history_with_overweight
+    - FAVC
+    - FCVC
+    - NCP
+    - CAEC
+    - SMOKE
+    - CH2O
+    - SCC
+    - FAF
+    - TUE
+    - CALC
+    - MTRANS
+
+diabetes:
+  status: pending_approval
+  target: Diabetes_binary
+  notes: Pending dataset selection and clinical variable approval.
+
+cvd:
+  status: pending_approval
+  target: TenYearCHD
+  notes: Pending dataset selection and longitudinal feature definition.
+
+masld:
+  status: pending_approval
+  target: Steatosis_grade_or_binary
+  notes: Pending diagnostic ground truth and biomarker approval.

@@ -1,0 +1,84 @@
+datasets:
+  obesity:
+    name: Estimation of Obesity Levels Based on Eating Habits and Physical Condition
+    status: active
+    file: data/raw/ObesityDataSet_raw_and_data_sinthetic.csv
+    source: UCI Machine Learning Repository
+    dataset_id: 544
+    doi: 10.24432/C5H31Z
+    paper_doi: 10.1016/j.dib.2019.104344
+    license: CC BY 4.0
+    acquired_on: "2026-10-24"
+    rows_expected: 2111
+    columns_expected: 17
+    synthetic_share_reported: 0.77
+    target: NObeyesdad
+    population: Adults aged 14-61 (Colombia, Mexico, Peru)
+    splitting_strategy: stratified_shuffle
+
+  diabetes:
+    name: Diabetes Health Indicators (BRFSS / CDC Candidate)
+    status: pending_approval
+    file: null
+    source: CDC Behavioral Risk Factor Surveillance System (Candidate)
+    license: Public Domain (US Gov)
+    target: Diabetes_binary
+    population: US Adults (Non-institutionalized population)
+    clinical_variables_required:
+      - HighBP
+      - HighChol
+      - BMI
+      - Smoker
+      - Stroke
+      - HeartDiseaseorAttack
+      - PhysActivity
+      - HvyAlcoholConsump
+    sample_structure: Cross-sectional annual survey
+    splitting_strategy: stratified_group_aware
+    notes: >
+      Pending formal dataset selection and institutional approval.
+      Requires audit for class imbalance and non-clinical lifestyle proxies.
+
+  cvd:
+    name: Cardiovascular Disease Screening Candidate (Framingham / Heart Disease UCI)
+    status: pending_approval
+    file: null
+    source: UCI Heart Disease / Framingham Heart Study (Candidate)
+    license: Open Database / Research Use Only (Pending selection)
+    target: TenYearCHD
+    population: Adult screening cohort
+    clinical_variables_required:
+      - sysBP
+      - diaBP
+      - totChol
+      - glucose
+      - prevalentHyp
+      - diabetes
+      - cigsPerDay
+    sample_structure: Longitudinal cohort or cross-sectional registry
+    splitting_strategy: temporal_or_group_aware
+    notes: >
+      Pending evaluation of longitudinal vs cross-sectional cohort boundaries.
+      Must preserve temporal ordering if longitudinal.
+
+  masld:
+    name: Metabolic Dysfunction-Associated Steatotic Liver Disease Candidate
+    status: pending_approval
+    file: null
+    source: NHANES or clinical ultrasound cohort (Candidate)
+    license: Pending selection
+    target: Steatosis_grade_or_binary
+    population: Adult screening population with liver ultrasound / transient elastography
+    clinical_variables_required:
+      - ALT
+      - AST
+      - Platelets
+      - Triglycerides
+      - Fasting_Glucose
+      - Waist_Circumference
+      - BMI
+    sample_structure: Clinical screening with diagnostic imaging ground truth
+    splitting_strategy: site_grouped_stratified
+    notes: >
+      Pending diagnostic ground truth verification (ultrasound / CAP score).
+      Must prevent cross-site leakage if multi-center.
