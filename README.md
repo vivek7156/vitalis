@@ -39,13 +39,17 @@ vitalis/
 │   ├── project-requirements.md
 │   ├── tech-stack.md
 │   └── vitalis_prototype_module_1_tasks.md
-├── pipeline/                  # Module 1 pipeline components
+├── pipeline/                  # Data, training and evaluation components
 │   ├── loader.py              # Schema validation & dataset loading
 │   ├── audit.py               # Leakage, duplicate & demographic audit
 │   ├── splitting.py           # Deduplication & stratified partitioning
 │   ├── preprocessing.py       # ColumnTransformer factories & encoders
-│   └── run_pipeline.py        # Unified Module 1 execution CLI
-├── tests/                     # 52 unit and integration tests (84% coverage)
+│   ├── run_pipeline.py        # Unified Module 1 execution CLI
+│   ├── training.py            # Module 2 CV, calibration and artifact training
+│   ├── evaluation.py          # Classification and calibration metrics
+│   └── calibration.py         # Brier score and ECE helpers
+├── web/                       # React/Vite screening and wellness interface
+├── tests/                     # Backend and pipeline unit/integration tests
 ├── requirements.txt           # Production dependencies
 └── requirements-dev.txt       # Development & test dependencies
 ```
@@ -101,9 +105,24 @@ Pipeline artifacts produced:
 pytest --cov=pipeline --cov=api tests/ -v
 ```
 
-All 52 tests execute using lightweight synthetic fixtures and real preprocessing round-trips without external downloads.
+Tests execute using lightweight synthetic fixtures and real preprocessing round-trips without external downloads.
 
-### 4. Run the API Server
+### 4. Train Module 2 models
+
+The training command fits Logistic Regression, Random Forest and CatBoost candidates
+using fresh preprocessing inside each stratified training fold. It selects a champion
+by cross-validated macro-F1, calibrates it on `obesity_val.csv`, and evaluates the
+calibrated artifact once on the frozen test partition:
+
+```bash
+python -m pipeline.training --folds 5
+```
+
+Outputs are written to `artifacts/` and include one model and metrics JSON for each
+obesity feature set. The test partition is never used for model selection or
+calibration.
+
+### 5. Run the API Server
 
 ```bash
 # Launch FastAPI development server
@@ -112,8 +131,20 @@ uvicorn api.main:app --reload --port 8000
 
 - **Interactive Swagger Docs:** [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
 - **Health Check:** `GET http://127.0.0.1:8000/health`
-- **Readiness Check:** `GET http://127.0.0.1:8000/readiness` (reports Module 1 readiness and unimplemented states honestly)
-- **Obesity E2 Screening Preprocessing:** `POST http://127.0.0.1:8000/api/v1/screen/obesity`
+- **Readiness Check:** `GET http://127.0.0.1:8000/readiness` (reports trained and pending specialist states)
+- **Obesity E2 Screening:** `POST http://127.0.0.1:8000/api/v1/screen/obesity`
+
+### 6. Run the frontend
+
+```bash
+cd web
+npm ci
+npm run dev
+```
+
+The UI includes an explicit consent notice, keyboard-accessible validated screening
+fields, model readiness/result states, and a separate wellness panel. Wearable
+values remain unavailable until an approved source is connected.
 
 ---
 

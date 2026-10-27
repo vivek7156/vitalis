@@ -13,6 +13,9 @@ artifacts/*
 logs/*
 *.db
 *.sqlite
+catboost_info/
+web/node_modules/
+web/dist/
 
 !data/raw/.gitkeep
 !data/processed/.gitkeep

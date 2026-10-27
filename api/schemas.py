@@ -128,6 +128,10 @@ class PreprocessingVerificationResponse(BaseModel):
     model_readiness: str = "PENDING_MODULE_2_TRAINING"
     message: str
     advisory_notes: list[str] = Field(default_factory=list)
+    prediction: str | None = None
+    probability: float | None = None
+    uncertain: bool | None = None
+    model_id: str | None = None
 
 
 class ErrorItem(BaseModel):

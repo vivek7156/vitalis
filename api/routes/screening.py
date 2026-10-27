@@ -9,6 +9,7 @@ Covers:
 - T-INTEGRATE-05: Smoke test labelled software integration test, not a usable health model.
 """
 
+import json
 from pathlib import Path
 
 import pandas as pd
@@ -23,6 +24,20 @@ from api.schemas import (
 from pipeline.preprocessing import load_preprocessing, transform_partition
 
 router = APIRouter(prefix="/api/v1/screen", tags=["Screening"])
+
+
+def _load_trained_model(artifacts_dir: Path, feature_set: str):
+    """Load only artifacts produced by the Module 2 training workflow."""
+    model_path = artifacts_dir / f"obesity_{feature_set}_model.joblib"
+    metrics_path = artifacts_dir / f"obesity_{feature_set}_training_metrics.json"
+    if not model_path.exists() or not metrics_path.exists():
+        return None, None
+    metadata = json.loads(metrics_path.read_text(encoding="utf-8"))
+    if metadata.get("calibration", {}).get("test_partition_excluded") is not True:
+        return None, None
+    import joblib
+
+    return joblib.load(model_path), metadata
 
 
 @router.post(
@@ -66,6 +81,10 @@ def screen_obesity_e2(payload: ObesityE2Input) -> PreprocessingVerificationRespo
             detail=f"Preprocessing transformation error: {exc}",
         )
 
+    trained_model, model_metadata = _load_trained_model(
+        artifacts_dir, "e2_lifestyle_only"
+    )
+
     # Check advisory notices (e.g. minors under 18)
     advisories: list[str] = []
     if payload.Age < 18:
@@ -74,18 +93,33 @@ def screen_obesity_e2(payload: ObesityE2Input) -> PreprocessingVerificationRespo
             "standard adult obesity screening thresholds may vary."
         )
 
-    return PreprocessingVerificationResponse(
+    response = PreprocessingVerificationResponse(
         disease="obesity",
         feature_set="e2_lifestyle_only",
         status="PREPROCESSING_SUCCESSFUL",
         transformed_feature_count=int(X_trans.shape[1]),
-        model_readiness="PENDING_MODULE_2_TRAINING",
+        model_readiness=(
+            "AVAILABLE" if trained_model is not None else "PENDING_MODULE_2_TRAINING"
+        ),
         message=(
-            "Software integration test passed. Input was successfully validated and transformed. "
+            "Input was validated and evaluated by the calibrated obesity specialist."
+            if trained_model is not None
+            else "Software integration test passed. Input was successfully validated and transformed. "
             "Specialist model inference is blocked until Module 2 training and calibration are complete."
         ),
         advisory_notes=advisories,
     )
+    if trained_model is not None:
+        probabilities = trained_model.predict_proba(df_single[feature_list])[0]
+        classes = list(trained_model.classes_)
+        best_index = int(probabilities.argmax())
+        response.prediction = str(classes[best_index])
+        response.probability = float(probabilities[best_index])
+        response.uncertain = response.probability < 0.60
+        response.model_id = (
+            f"obesity-e2-{model_metadata['champion_model'].lower()}-calibrated"
+        )
+    return response
 
 
 @router.post(
@@ -119,6 +153,10 @@ def screen_obesity_e1(payload: ObesityE1Input) -> PreprocessingVerificationRespo
             detail=f"Preprocessing transformation error: {exc}",
         )
 
+    trained_model, model_metadata = _load_trained_model(
+        artifacts_dir, "e1_bmi_inclusive"
+    )
+
     advisories = [
         "Researcher Baseline Notice: E1 includes Height and Weight, which directly reconstruct BMI labels."
     ]
@@ -127,18 +165,33 @@ def screen_obesity_e1(payload: ObesityE1Input) -> PreprocessingVerificationRespo
             "Advisory: Respondent is under 18. Pediatric growth standards apply."
         )
 
-    return PreprocessingVerificationResponse(
+    response = PreprocessingVerificationResponse(
         disease="obesity",
         feature_set="e1_bmi_inclusive",
         status="PREPROCESSING_SUCCESSFUL",
         transformed_feature_count=int(X_trans.shape[1]),
-        model_readiness="PENDING_MODULE_2_TRAINING",
+        model_readiness=(
+            "AVAILABLE" if trained_model is not None else "PENDING_MODULE_2_TRAINING"
+        ),
         message=(
             "Software integration test passed for E1 baseline. "
             "Model training is pending Module 2."
+            if trained_model is None
+            else "Input was evaluated by the calibrated researcher baseline."
         ),
         advisory_notes=advisories,
     )
+    if trained_model is not None:
+        probabilities = trained_model.predict_proba(df_single[feature_list])[0]
+        classes = list(trained_model.classes_)
+        best_index = int(probabilities.argmax())
+        response.prediction = str(classes[best_index])
+        response.probability = float(probabilities[best_index])
+        response.uncertain = response.probability < 0.60
+        response.model_id = (
+            f"obesity-e1-{model_metadata['champion_model'].lower()}-calibrated"
+        )
+    return response
 
 
 @router.post("/{disease}")

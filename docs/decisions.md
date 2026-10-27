@@ -32,3 +32,12 @@
 - **Decision:** Frequency features with fractional values (`FCVC`, `NCP`, `CH2O`, `FAF`, `TUE`) resulting from SMOTE synthetic interpolation must remain as continuous `float64` values and must not be silently discretized or rounded.
 - **Eligibility:** Primary screening targets adults (18–65). Records with age 14–17 will trigger an age advisory note during assessment. All 14 E2 fields are mandatory at inference; missing required inputs cannot be bypassed via imputation.
 - **Status:** Approved
+
+## DEC-006: Module 2 Training and Calibration Boundary
+- **Date:** 2026-10-27
+- **Decision:** Train obesity E1 and E2 candidates with fresh preprocessing inside
+  stratified training folds. Select the champion by cross-validated macro-F1,
+  calibrate it on the frozen validation partition, and evaluate the calibrated
+  artifact once on the frozen test partition.
+- **Candidates:** Logistic Regression, Random Forest and CatBoost.
+- **Status:** Approved

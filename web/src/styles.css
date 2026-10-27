@@ -1,0 +1,58 @@
+:root {
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, sans-serif;
+  color: #173a3a;
+  background: #f5f8f6;
+  font-synthesis: none;
+}
+* { box-sizing: border-box; }
+body { margin: 0; min-width: 360px; }
+button, input, select { font: inherit; }
+button { cursor: pointer; }
+.topbar { height: 72px; display: flex; align-items: center; justify-content: space-between; padding: 0 clamp(20px, 6vw, 88px); background: #fff; border-bottom: 1px solid #dfeae5; }
+.brand { color: #173a3a; font-size: 1.65rem; font-weight: 800; letter-spacing: -.06em; text-decoration: none; }
+.brand span { color: #ef7c62; }
+.topbar-note, .muted, .form-footnote { color: #668080; font-size: .88rem; }
+.shell { max-width: 920px; margin: 0 auto; padding: 64px 20px; }
+.hero { max-width: 680px; margin-bottom: 38px; }
+.eyebrow { color: #e26954; font-size: .72rem; font-weight: 800; letter-spacing: .14em; }
+h1 { margin: 12px 0; color: #173a3a; font-size: clamp(2.4rem, 7vw, 4.8rem); line-height: .98; letter-spacing: -.07em; }
+h2 { margin: 7px 0 0; font-size: 1.55rem; letter-spacing: -.04em; }
+p { line-height: 1.6; }
+.hero p { color: #557171; font-size: 1.12rem; }
+.card { margin: 18px 0; padding: clamp(22px, 4vw, 38px); background: #fff; border: 1px solid #dfeae5; border-radius: 22px; box-shadow: 0 14px 40px rgba(39, 83, 72, .06); }
+.consent { max-width: 700px; }
+.notice-list { margin: 22px 0 28px; padding-left: 20px; color: #557171; line-height: 1.9; }
+.primary-button { border: 0; border-radius: 999px; padding: 13px 22px; color: #fff; background: #173a3a; font-weight: 750; transition: background .2s, transform .2s; }
+.primary-button:hover { background: #275b57; transform: translateY(-1px); }
+.primary-button:disabled { cursor: wait; opacity: .65; }
+.section-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; }
+.status-pill { display: inline-flex; align-items: center; border-radius: 999px; padding: 7px 11px; color: #557171; background: #edf4f0; font-size: .7rem; font-weight: 800; letter-spacing: .06em; white-space: nowrap; }
+.status-pill.pending { color: #8d5c25; background: #fff4df; }
+.status-pill.ready { color: #1d704e; background: #def5e9; }
+.form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; margin: 25px 0; }
+.field { display: flex; flex-direction: column; gap: 7px; color: #335756; font-size: .85rem; font-weight: 700; }
+.field input, .field select { width: 100%; padding: 11px 12px; color: #173a3a; background: #fbfdfc; border: 1px solid #cbdcd5; border-radius: 9px; outline: none; }
+.field input:focus, .field select:focus { border-color: #ef7c62; box-shadow: 0 0 0 3px #fde2db; }
+.field input[aria-invalid="true"], .field select[aria-invalid="true"] { border-color: #d65145; }
+.field-error { color: #b43e35; font-weight: 600; }
+.alert { margin: 18px 0; padding: 13px 15px; border-radius: 10px; font-size: .9rem; line-height: 1.45; }
+.alert.error { color: #9c322a; background: #fff0ee; }
+.alert.notice { color: #795324; background: #fff7e8; }
+.form-footnote { margin-bottom: 0; }
+.prediction { display: grid; gap: 4px; margin: 25px 0; padding: 20px; color: #fff; background: #275b57; border-radius: 15px; }
+.prediction span { opacity: .8; font-size: .8rem; }
+.prediction strong { font-size: 1.7rem; }
+.disclaimer { color: #668080; font-size: .82rem; }
+.wellness-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 22px 0; }
+.wellness-grid div { display: grid; gap: 6px; padding: 16px; background: #f5f8f6; border-radius: 12px; }
+.wellness-grid strong { font-size: 1.5rem; }
+.wellness-grid span { color: #668080; font-size: .8rem; }
+footer { padding: 24px 20px 40px; color: #668080; text-align: center; font-size: .78rem; }
+@media (max-width: 600px) {
+  .topbar { height: 62px; }
+  .topbar-note { max-width: 160px; text-align: right; font-size: .72rem; }
+  .shell { padding-top: 40px; }
+  .form-grid { grid-template-columns: 1fr; }
+  .section-heading { flex-direction: column; }
+  .wellness-grid { grid-template-columns: 1fr; }
+}

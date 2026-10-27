@@ -36,7 +36,8 @@ def test_readiness_endpoint():
     specs = data["specialists"]
     assert "obesity" in specs
     assert specs["obesity"]["module_1_pipeline_ready"] is True
-    assert specs["obesity"]["model_trained"] is False
+    assert specs["obesity"]["model_trained"] is True
+    assert specs["obesity"]["status"] == "available"
     assert specs["diabetes"]["status"] == "pending_approval"
     assert specs["cvd"]["status"] == "pending_approval"
     assert specs["masld"]["status"] == "pending_approval"
@@ -65,7 +66,10 @@ def test_obesity_e2_valid_fixture():
     assert data["status"] == "PREPROCESSING_SUCCESSFUL"
     assert data["disease"] == "obesity"
     assert data["feature_set"] == "e2_lifestyle_only"
-    assert data["model_readiness"] == "PENDING_MODULE_2_TRAINING"
+    assert data["model_readiness"] == "AVAILABLE"
+    assert data["prediction"]
+    assert 0.0 <= data["probability"] <= 1.0
+    assert data["model_id"]
     assert data["transformed_feature_count"] > 0
 
 
